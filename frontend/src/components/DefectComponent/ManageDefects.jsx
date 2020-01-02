@@ -7,6 +7,7 @@ import Container from "@material-ui/core/Container";
 import DefectCustomToolbar from "./DefectCustomToolbar";
 import DefectCustomToolbarSelect from "./DefectCustomToolbarSelect";
 import Axios from "axios";
+import { DEFECT_BASE_URL } from "../../api";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -119,7 +120,7 @@ export default function ManageDefects() {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8087/api/v1/defect")
+    Axios.get(`${DEFECT_BASE_URL}/defect`)
       .then(response => {
         console.log(response);
         setDefect(response.data.results.listAllDefect);
@@ -160,7 +161,7 @@ export default function ManageDefects() {
   };
 
   const handleDelete = () => {
-    Axios.delete(`http://localhost:8087/api/v1/defect/${values.id}`)
+    Axios.delete(`${DEFECT_BASE_URL}/defect/${values.id}`)
       .then(response => {
         console.log(response);
         setShowResult("alert alert-success");

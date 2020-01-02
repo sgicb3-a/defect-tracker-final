@@ -12,15 +12,15 @@ import com.sendgrid.helpers.mail.objects.Email;
 
 
 public class EmailService {
-
+	
 	public static void sendMail(String froms, String sub, String tos, String cont) throws IOException{
 		Email from = new Email(froms);
 	    String subject = sub;
 	    Email to = new Email(tos);
 	    Content content = new Content("text/plain", cont);
 	    Mail mail = new Mail(from, subject, to, content);
-
-	    SendGrid sg = new SendGrid("API_KEY");
+	
+	    SendGrid sg = new SendGrid("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");
 	    Request request = new Request();
 	    try {
 	      request.setMethod(Method.POST);

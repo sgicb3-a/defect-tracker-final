@@ -76,7 +76,7 @@ public class EmployeeController {
 		String from = "Register@defect-tracker.com";
 		String to = employee.getEmail();
 		String subject = "Login Details";
-		String content = "Hi "+fullName+", Here is your Login Details: \n Username: "+username+"\n Temporary Password: "+password+"\n After login to the system you can change your temporary password by click on Settings->User Profile. \n Here is the Login URL: http://localhost:3000";
+		String content = "Hi "+fullName+", Here is your Login Details: \n Username: "+username+"\n Temporary Password: "+password+"\n After login to the system you can change your temporary password by clicking on your Profile Picture. \n Here is the Login URL: http://localhost:3000";
 		EmailService.sendMail(from,subject,to,content);
 		return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.CREATED), HttpStatus.OK);
 	}

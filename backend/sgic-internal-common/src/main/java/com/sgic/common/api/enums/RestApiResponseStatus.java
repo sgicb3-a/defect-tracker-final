@@ -3,7 +3,7 @@ package com.sgic.common.api.enums;
 public enum RestApiResponseStatus {
 
 	OK(20000, "OK"),
-
+	
 	CREATED(20100, "Record Successfully Created"),
 	UPDATED(20200, "Record Successfully Updated"),
 	DELETED(20300, "Record Successfully Deleted"),
@@ -13,15 +13,15 @@ public enum RestApiResponseStatus {
 	LOGIN_SUCCESS(20700, "Successfully Authenticated"),
 	PASS_UPDATED(20800, "New Password Successfully Updated"),
 	RESET_REQ(20900, "If your Username matches with our record you will receive a password rest link via email"),
-
+	
 	VALIDATION_FAILURE(40000, "VALIDATION_FAILURE"),
 	VF_EMAIL(40001, "Email Already Exists"),
 	VF_UNAME(40002, "Username Already Exists"),
-
+	
 	NOT_FOUND(40400, "Id Not Found"),
 	FORBIDDEN(40300, "FORBIDDEN"),
 	ERROR(50000, "ERROR"),
-
+	
 	DELETION_FAILURE(50001, "Unable to Delete - First Remove Blocking Dependency and Try Again"),
 	PAF_MAXIMUM(50002, "Unable to Allocate - Already Maximum Projects Allocated"),
 	SAF_MAXIMUM(50003, "Unable to Allocate - Already Maximum Submodules Allocated"),
@@ -33,14 +33,14 @@ public enum RestApiResponseStatus {
 	PASS_DIFF(50009, "Unable to Update - Old/Temporary Password is not Correct!");
 
    private Integer code;
-
+   
    private String message;
-
+  
    private RestApiResponseStatus(Integer code, String message) {
 	   this.code = code;
 	   this.message = message;
    }
-
+  
   	public Integer getCode() {
 		return code;
 	}
@@ -56,7 +56,7 @@ public enum RestApiResponseStatus {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
+ 
 	@Override
 	public String toString() {
 		return code + ":" + message;
