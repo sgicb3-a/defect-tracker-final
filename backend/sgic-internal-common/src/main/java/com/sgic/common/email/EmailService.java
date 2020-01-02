@@ -20,7 +20,7 @@ public class EmailService {
 	    Content content = new Content("text/plain", cont);
 	    Mail mail = new Mail(from, subject, to, content);
 	
-	    SendGrid sg = new SendGrid("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");
+	    SendGrid sg = new SendGrid("API_KEY");
 	    Request request = new Request();
 	    try {
 	      request.setMethod(Method.POST);
