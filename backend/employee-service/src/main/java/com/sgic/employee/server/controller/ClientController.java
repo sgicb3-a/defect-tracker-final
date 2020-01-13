@@ -32,6 +32,9 @@ public class ClientController {
 	
 	@Autowired
 	ClientService clientService;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private Mapper mapper;
@@ -61,9 +64,8 @@ public class ClientController {
 	}
 	
 	//Check Whether Client Id Exists on Another Service
-	private static boolean isExists(String uri)
+	private boolean isExists(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -71,7 +73,7 @@ public class ClientController {
 	//Delete Client
 	@DeleteMapping(value = "/client/{id}")
 	public ResponseEntity<Object> removeClient(@PathVariable Long id) {
-		if(!isExists("http://localhost:1725/api/v1/project/exist/CLI"+id)) {
+		if(!isExists("http://project-service/api/v1/project/exist/CLI"+id)) {
 			clientService.deleteClient(id);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.DELETED), HttpStatus.OK);
 		}

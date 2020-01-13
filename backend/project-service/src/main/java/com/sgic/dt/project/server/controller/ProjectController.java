@@ -42,6 +42,9 @@ public class ProjectController {
 	Employee_ProjectService employee_projectService;
 	
 	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
 	ErrorCodes errorMessages;
 
 	@Autowired
@@ -56,9 +59,8 @@ public class ProjectController {
 		return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.CREATED), HttpStatus.CREATED);
 	}
 	
-	private static String getName(String uri)
-	{	     
-	    RestTemplate restTemplate = new RestTemplate();
+	private String getName(String uri)
+	{	
 	    String name = restTemplate.getForObject(uri, String.class);
 	    return name;
 	}
@@ -71,7 +73,7 @@ public class ProjectController {
 		List<ProjectDTO> projectDtoList = mapper.map(projectList, ProjectDTO.class);
 		
 		for(ProjectDTO projectDto : projectDtoList) {
-			projectDto.setClientName(getName("http://localhost:1724/api/v1/client/name/"+projectDto.getClientId()));
+			projectDto.setClientName(getName("http://employee-service/api/v1/client/name/"+projectDto.getClientId()));
 		}
 		
 		return new ResponseEntity<>(new ListContentResponse<ProjectDTO>("List",projectDtoList, RestApiResponseStatus.RECEIVED), HttpStatus.OK);
@@ -85,7 +87,7 @@ public class ProjectController {
 	{
 		Project project = projectService.getProjectById(id);
 		ProjectDTO projectDto = mapper.map(project, ProjectDTO.class);
-		projectDto.setClientName(getName("http://localhost:1724/api/v1/client/name/"+projectDto.getClientId()));
+		projectDto.setClientName(getName("http://employee-service/api/v1/client/name/"+projectDto.getClientId()));
 		return new ResponseEntity<>(new ContentResponse<ProjectDTO>("Object", projectDto, RestApiResponseStatus.RECEIVED), HttpStatus.OK);	
 		
 	}

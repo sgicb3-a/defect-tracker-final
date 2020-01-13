@@ -12,14 +12,14 @@ import com.sendgrid.helpers.mail.objects.Email;
 
 
 public class EmailService {
-	
+
 	public static void sendMail(String froms, String sub, String tos, String cont) throws IOException{
 		Email from = new Email(froms);
 	    String subject = sub;
 	    Email to = new Email(tos);
 	    Content content = new Content("text/plain", cont);
 	    Mail mail = new Mail(from, subject, to, content);
-	
+
 	    SendGrid sg = new SendGrid("API_KEY");
 	    Request request = new Request();
 	    try {

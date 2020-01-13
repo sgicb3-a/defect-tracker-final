@@ -54,6 +54,9 @@ public class Employee_ProjectController {
 	ModuleService moduleService;
 	@Autowired
 	SubModuleService subModuleService;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private Mapper mapper;
@@ -61,9 +64,8 @@ public class Employee_ProjectController {
 	
 	//=============== ADD A Employee_Project =================================================//
 	
-	private static boolean checkAvailability(String uri)
+	private boolean checkAvailability(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -80,7 +82,7 @@ public class Employee_ProjectController {
 			}
 		}
 		
-		if(checkAvailability("http://localhost:1724/api/v1/employee/allocate/PRO"+employee_projectDTO.getEmployeeId())) {		
+		if(checkAvailability("http://employee-service/api/v1/employee/allocate/PRO"+employee_projectDTO.getEmployeeId())) {		
 			Employee_Project employee_project = mapper.map(employee_projectDTO, Employee_Project.class);		
 			employee_projectService.createEmployee_Project(employee_project);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.ALLOCATED), HttpStatus.OK);
@@ -106,8 +108,7 @@ public class Employee_ProjectController {
 			employee_projectDTO_Object.setRoleName(role.getName());
 			
 			
-			final String url = "http://localhost:1724/api/v1/employee/dto/ID"+employee_projectDTO_Object.getEmployeeId();
-		    RestTemplate restTemplate = new RestTemplate();
+			final String url = "http://employee-service/api/v1/employee/dto/ID"+employee_projectDTO_Object.getEmployeeId();
 		    TempDTO tempDTO = restTemplate.getForObject(url, TempDTO.class);
 		    
 		    employee_projectDTO_Object.setEmployeeFirstName(tempDTO.getFirstName());
@@ -148,7 +149,7 @@ public class Employee_ProjectController {
 		Employee_Project employee_project = employee_projectService.getEmployee_ProjectById(id);
 		Long pid = employee_project.getProjectId();
 		if(!employee_SubModuleService.isProjectIdExist(pid)){
-			checkAvailability("http://localhost:1724/api/v1/employee/deallocate/PRO"+employee_project.getEmployeeId());
+			checkAvailability("http://employee-service/api/v1/employee/deallocate/PRO"+employee_project.getEmployeeId());
 			employee_projectService.deleteById(id);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.DE_ALLOCATED), HttpStatus.OK);
 		} else {

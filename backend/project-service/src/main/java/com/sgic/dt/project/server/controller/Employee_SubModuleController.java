@@ -53,6 +53,9 @@ public class Employee_SubModuleController {
 	ModuleService moduleService;
 	
 	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
 	ErrorCodes errorMessages;
 
 	@Autowired
@@ -61,9 +64,8 @@ public class Employee_SubModuleController {
 	
 	//=============== ADD A Employee_SubModule =================================================//
 	
-	private static boolean checkAvailability(String uri)
+	private boolean checkAvailability(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -80,7 +82,7 @@ public class Employee_SubModuleController {
 			}
 		}
 		
-		if(checkAvailability("http://localhost:1724/api/v1/employee/allocate/SUB"+employee_SubModuleDTO.getEmployeeId())) {
+		if(checkAvailability("http://employee-service/api/v1/employee/allocate/SUB"+employee_SubModuleDTO.getEmployeeId())) {
 			Employee_SubModule employee_SubModule = mapper.map(employee_SubModuleDTO, Employee_SubModule.class);		
 			employee_SubModuleService.createEmployee_SubModule(employee_SubModule);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.ALLOCATED), HttpStatus.OK);
@@ -106,8 +108,7 @@ public class Employee_SubModuleController {
 			employee_SubModuleDTO_Object.setProjectId(project.getId());
 			employee_SubModuleDTO_Object.setProjectName(project.getName());
 			
-			final String url = "http://localhost:1724/api/v1/employee/dto/ID"+employee_SubModuleDTO_Object.getEmployeeId();
-		    RestTemplate restTemplate = new RestTemplate();
+			final String url = "http://employee-service/api/v1/employee/dto/ID"+employee_SubModuleDTO_Object.getEmployeeId();
 		    TempDTO tempDTO = restTemplate.getForObject(url, TempDTO.class);
 		    employee_SubModuleDTO_Object.setEmployeeFirstName(tempDTO.getFirstName());
 		    employee_SubModuleDTO_Object.setEmployeeLastName(tempDTO.getLastName());
@@ -160,9 +161,8 @@ public class Employee_SubModuleController {
 	
 	//=============== DELETE Employee_SubModule BY ID =========================//
 	
-	private static boolean isExists(String uri)
-	{	     
-	    RestTemplate restTemplate = new RestTemplate();
+	private boolean isExists(String uri)
+	{	
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -171,8 +171,8 @@ public class Employee_SubModuleController {
 	public ResponseEntity<Object> deleteEmployee_SubModule(@PathVariable Long id) {
 		Employee_SubModule employee_SubModule = employee_SubModuleService.getEmployee_SubModuleById(id);
 		long sid = employee_SubModule.getSubModuleId();
-		if(!isExists("http://localhost:8087/api/v1/defect/exist/SUB"+sid)) {
-			checkAvailability("http://localhost:1724/api/v1/employee/deallocate/SUB"+employee_SubModule.getEmployeeId());
+		if(!isExists("http://defect-service/api/v1/defect/exist/SUB"+sid)) {
+			checkAvailability("http://employee-service/api/v1/employee/deallocate/SUB"+employee_SubModule.getEmployeeId());
 			employee_SubModuleService.deleteEmployee_SubModule(id);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.DE_ALLOCATED), HttpStatus.OK);
 		} else {
@@ -188,8 +188,7 @@ public class Employee_SubModuleController {
 		List<Employee_SubModuleDTO> employee_subModuleDTOList = mapper.map(employee_subModuleList, Employee_SubModuleDTO.class);
 		for(Employee_SubModuleDTO employee_subModuleDTO_Object : employee_subModuleDTOList)
 		{
-			final String url = "http://localhost:1724/api/v1/employee/dto/ID"+employee_subModuleDTO_Object.getEmployeeId();
-			RestTemplate restTemplate = new RestTemplate();
+			final String url = "http://employee-service/api/v1/employee/dto/ID"+employee_subModuleDTO_Object.getEmployeeId();
 			TempDTO tempDTO = restTemplate.getForObject(url, TempDTO.class);
 			tempDTOList.add(tempDTO);   
 		}

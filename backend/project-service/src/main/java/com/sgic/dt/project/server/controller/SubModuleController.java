@@ -47,6 +47,9 @@ public class SubModuleController {
 	Employee_SubModuleService employee_subModuleService;
 	
 	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
 	ErrorCodes errorMessages;
 
 	@Autowired
@@ -104,9 +107,8 @@ public class SubModuleController {
 	}
 	
 	//Check Whether Submodule Id Exists on Another Service
-	private static boolean isExists(String uri)
-	{	     
-	    RestTemplate restTemplate = new RestTemplate();
+	private boolean isExists(String uri)
+	{	
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -114,7 +116,7 @@ public class SubModuleController {
 	//=============== DELETE SUBMODULE BY ID =========================//
 	@DeleteMapping(value = "/submodule/{id}")
 	public ResponseEntity<Object> deleteSubModule(@PathVariable Long id) {
-		if(!employee_subModuleService.isSubModuleIdExist(id) && !isExists("http://localhost:8087/api/v1/defect/exist/SUB"+id)) {
+		if(!employee_subModuleService.isSubModuleIdExist(id) && !isExists("http://defect-service/api/v1/defect/exist/SUB"+id)) {
 			subModuleService.deleteSubModule(id);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.DELETED), HttpStatus.OK);
 		} else {

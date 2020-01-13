@@ -54,6 +54,9 @@ public class DefectController {
 
 	@Autowired
 	TypeService typeService;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private Mapper mapper;
@@ -67,19 +70,18 @@ public class DefectController {
 		Priority pri = priorityService.getPriorityById(defectData.getPriorityId());
 		String priority = pri.getName();
 		String subject = "New "+priority+" Priority Defect";
-		String to = getName("http://localhost:1724/api/v1/employee/email/"+defectData.getAssignedTo());
+		String to = getName("http://employee-service/api/v1/employee/email/"+defectData.getAssignedTo());
 		String defectName = defectData.getName();
-		String submoduleName= getName("http://localhost:1725/api/v1/submodule/name/"+defectData.getSubmoduleId());
-		String projectName = getName("http://localhost:1725/api/v1/project/name/"+defectData.getProjectId());
+		String submoduleName= getName("http://project-service/api/v1/submodule/name/"+defectData.getSubmoduleId());
+		String projectName = getName("http://project-service/api/v1/project/name/"+defectData.getProjectId());
 		String content = "You have a "+priority+" Priority Defect \""+defectName+"\" on the "+submoduleName+" of the "+projectName;
 		EmailService.sendMail(from,subject,to,content);
 		return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.CREATED), HttpStatus.OK);
 	}
 
 	//Retrieve Name for the Given Id
-	private static String getName(String uri)
+	private String getName(String uri)
 	{
-	    RestTemplate restTemplate = new RestTemplate();
 	    String name = restTemplate.getForObject(uri, String.class);
 	    return name;
 	}
@@ -92,20 +94,20 @@ public class DefectController {
 
 		for(DefectDto defectDto : defectData)
 		{
-			defectDto.setProjectName(getName("http://localhost:1725/api/v1/project/name/"+defectDto.getProjectId()));
+			defectDto.setProjectName(getName("http://project-service/api/v1/project/name/"+defectDto.getProjectId()));
 
-			defectDto.setModuleName(getName("http://localhost:1725/api/v1/module/name/"+defectDto.getModuleId()));
+			defectDto.setModuleName(getName("http://project-service/api/v1/module/name/"+defectDto.getModuleId()));
 
-			defectDto.setSubmoduleName(getName("http://localhost:1725/api/v1/submodule/name/"+defectDto.getSubmoduleId()));
+			defectDto.setSubmoduleName(getName("http://project-service/api/v1/submodule/name/"+defectDto.getSubmoduleId()));
 
-			defectDto.setAssignedToName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getAssignedTo()));
+			defectDto.setAssignedToName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getAssignedTo()));
 
-			defectDto.setAssignedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getAssignedBy()));
+			defectDto.setAssignedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getAssignedBy()));
 
-			defectDto.setCreatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getCreatedBy()));
+			defectDto.setCreatedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getCreatedBy()));
 
 			if(defectDto.getUpdatedBy()!=null) {
-				defectDto.setUpdatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getUpdatedBy()));
+				defectDto.setUpdatedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getUpdatedBy()));
 			}
 
 			Priority priority = priorityService.getPriorityById(defectDto.getPriorityId());
@@ -135,17 +137,17 @@ public class DefectController {
 		String status = sta.getName();
 		String subject = "Defect Status Changed: "+status;
 		if(defectData.getUpdatedBy()==defectData.getAssignedTo()) {
-			String to = getName("http://localhost:1724/api/v1/employee/email/"+defectData.getAssignedBy());
+			String to = getName("http://employee-service/api/v1/employee/email/"+defectData.getAssignedBy());
 			String defectName = defectData.getName();
-			String submoduleName= getName("http://localhost:1725/api/v1/submodule/name/"+defectData.getSubmoduleId());
-			String projectName = getName("http://localhost:1725/api/v1/project/name/"+defectData.getProjectId());
+			String submoduleName= getName("http://project-service/api/v1/submodule/name/"+defectData.getSubmoduleId());
+			String projectName = getName("http://project-service/api/v1/project/name/"+defectData.getProjectId());
 			String content = "Defect \""+defectName+"\" on the "+submoduleName+" of the "+projectName+" is "+status;
 			EmailService.sendMail(from,subject,to,content);
 		}else {
-			String to = getName("http://localhost:1724/api/v1/employee/email/"+defectData.getAssignedTo());
+			String to = getName("http://employee-service/api/v1/employee/email/"+defectData.getAssignedTo());
 			String defectName = defectData.getName();
-			String submoduleName= getName("http://localhost:1725/api/v1/submodule/name/"+defectData.getSubmoduleId());
-			String projectName = getName("http://localhost:1725/api/v1/project/name/"+defectData.getProjectId());
+			String submoduleName= getName("http://project-service/api/v1/submodule/name/"+defectData.getSubmoduleId());
+			String projectName = getName("http://project-service/api/v1/project/name/"+defectData.getProjectId());
 			String content = "Defect \""+defectName+"\" on the "+submoduleName+" of the "+projectName+" is "+status;
 			EmailService.sendMail(from,subject,to,content);
 		}
@@ -170,20 +172,20 @@ public class DefectController {
 		Defect defect = defectService.getDefectById(id);
 		DefectDto defectDto = mapper.map(defect, DefectDto.class);
 
-		defectDto.setProjectName(getName("http://localhost:1725/api/v1/project/name/"+defectDto.getProjectId()));
+		defectDto.setProjectName(getName("http://project-service/api/v1/project/name/"+defectDto.getProjectId()));
 
-		defectDto.setModuleName(getName("http://localhost:1725/api/v1/module/name/"+defectDto.getModuleId()));
+		defectDto.setModuleName(getName("http://project-service/api/v1/module/name/"+defectDto.getModuleId()));
 
-		defectDto.setSubmoduleName(getName("http://localhost:1725/api/v1/submodule/name/"+defectDto.getSubmoduleId()));
+		defectDto.setSubmoduleName(getName("http://project-service/api/v1/submodule/name/"+defectDto.getSubmoduleId()));
 
-		defectDto.setAssignedToName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getAssignedTo()));
+		defectDto.setAssignedToName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getAssignedTo()));
 
-		defectDto.setAssignedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getAssignedBy()));
+		defectDto.setAssignedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getAssignedBy()));
 
-		defectDto.setCreatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getCreatedBy()));
+		defectDto.setCreatedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getCreatedBy()));
 
 		if(defectDto.getUpdatedBy()!=null) {
-			defectDto.setUpdatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectDto.getUpdatedBy()));
+			defectDto.setUpdatedByName(getName("http://employee-service/api/v1/employee/name/"+defectDto.getUpdatedBy()));
 		}
 
 		Priority priority = priorityService.getPriorityById(defectDto.getPriorityId());

@@ -1,6 +1,7 @@
 package com.sgic.login.server.controller;
 
 import org.jasypt.util.password.StrongPasswordEncryptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,16 +24,17 @@ import com.sgic.login.server.dto.UserDto;
 @RequestMapping("/api/v1")
 public class UserController {
 	
-	private static boolean isExists(String uri)
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	private boolean isExists(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
 	
-	private static boolean isReset(String uri)
+	private boolean isReset(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -40,9 +42,8 @@ public class UserController {
 	@GetMapping(value = "/user/{sid}")
 	public UserDto getUserDetails(@PathVariable String sid) 
 	{
-		if(isExists("http://localhost:1724/api/v1/employee/exist/USER"+sid)) {
-			final String url = "http://localhost:1724/api/v1/employee/dto/UN"+sid;
-			RestTemplate restTemplate = new RestTemplate();
+		if(isExists("http://employee-service/api/v1/employee/exist/USER"+sid)) {
+			final String url = "http://employee-service/api/v1/employee/dto/UN"+sid;
 			UserDto userDto = restTemplate.getForObject(url, UserDto.class);
 			return userDto;
 		}
@@ -56,7 +57,6 @@ public class UserController {
 	
 	@PostMapping(value = "/user/auth")
 	public ResponseEntity<Object> authenticateUser(@RequestBody UserDto userDto) {
-		System.out.println(userDto.getUsername());
 		if(getUserDetails(userDto.getUsername())!=null) {
 			UserDto serverUserDto = getUserDetails(userDto.getUsername());
 			if(serverUserDto.isActive()) {
@@ -76,8 +76,8 @@ public class UserController {
 	
 	@PostMapping(value = "/user/reset/{uname}")
 	public ResponseEntity<Object> forgotPassword(@PathVariable String uname) {
-		if(isExists("http://localhost:1724/api/v1/employee/exist/USER"+uname)) {
-			isReset("http://localhost:1724/api/v1/employee/reset-password/"+uname);
+		if(isExists("http://employee-service/api/v1/employee/exist/USER"+uname)) {
+			isReset("http://employee-service/api/v1/employee/reset-password/"+uname);
 		}
 		return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.RESET_REQ), HttpStatus.OK);
 	}	

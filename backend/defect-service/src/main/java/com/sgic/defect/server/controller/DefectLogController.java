@@ -35,6 +35,9 @@ public class DefectLogController {
 	StatusService statusService;
 	
 	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
 	private Mapper mapper;
 
 	//Add Defect Log
@@ -45,9 +48,8 @@ public class DefectLogController {
 		return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.CREATED), HttpStatus.OK);	
 	}
 	
-	private static String getName(String uri)
+	private String getName(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    String name = restTemplate.getForObject(uri, String.class);
 	    return name;
 	}
@@ -60,15 +62,15 @@ public class DefectLogController {
 		
 		for(DefectLogDto defectLogDto : defectLogData)
 		{
-			defectLogDto.setProjectName(getName("http://localhost:1725/api/v1/project/name/"+defectLogDto.getProjectId()));
+			defectLogDto.setProjectName(getName("http://project-service/api/v1/project/name/"+defectLogDto.getProjectId()));
 			
-			defectLogDto.setAssignedToName(getName("http://localhost:1724/api/v1/employee/name/"+defectLogDto.getAssignedTo()));
+			defectLogDto.setAssignedToName(getName("http://employee-service/api/v1/employee/name/"+defectLogDto.getAssignedTo()));
 			
-			defectLogDto.setAssignedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectLogDto.getAssignedBy()));
+			defectLogDto.setAssignedByName(getName("http://employee-service/api/v1/employee/name/"+defectLogDto.getAssignedBy()));
 			
-			defectLogDto.setCreatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectLogDto.getCreatedBy()));
+			defectLogDto.setCreatedByName(getName("http://employee-service/api/v1/employee/name/"+defectLogDto.getCreatedBy()));
 			
-			defectLogDto.setUpdatedByName(getName("http://localhost:1724/api/v1/employee/name/"+defectLogDto.getUpdatedBy()));
+			defectLogDto.setUpdatedByName(getName("http://employee-service/api/v1/employee/name/"+defectLogDto.getUpdatedBy()));
 			
 			Status status = statusService.getStatusById(defectLogDto.getStatusId());
 			defectLogDto.setStatusName(status.getName());

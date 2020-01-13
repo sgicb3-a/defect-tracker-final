@@ -45,6 +45,9 @@ public class EmployeeController {
 	
 	@Autowired
 	private DesignationService designationService;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	ErrorCodes errorMessages;
@@ -160,9 +163,8 @@ public class EmployeeController {
 	
 	
 	//Check Whether Employee Id Exists on Another Service
-	private static boolean isExists(String uri)
+	private boolean isExists(String uri)
 	{	     
-	    RestTemplate restTemplate = new RestTemplate();
 	    boolean result = restTemplate.getForObject(uri, Boolean.class);
 	    return result;
 	}
@@ -171,7 +173,7 @@ public class EmployeeController {
 
 	@DeleteMapping(value = "/employee/{id}")
 	public ResponseEntity<Object> deleteEmployee(@PathVariable Long id) {
-		if(!isExists("http://localhost:1725/api/v1/employee_project/exist/EMP"+id) && !isExists("http://localhost:1725/api/v1/employee_submodule/exist/EMP"+id) && !isExists("http://localhost:8087/api/v1/defect/exist/EMP"+id)) {
+		if(!isExists("http://project-service/api/v1/employee_project/exist/EMP"+id) && !isExists("http://project-service/api/v1/employee_submodule/exist/EMP"+id) && !isExists("http://localhost:8087/api/v1/defect/exist/EMP"+id)) {
 			employeeService.deleteEmployee(id);
 			return new ResponseEntity<>(new ApiResponse(RestApiResponseStatus.DELETED), HttpStatus.OK);
 		} else {
